@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Eventia</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styledash.css">
+</head>
+
+<body style="background-color: #F2F2F2;">
+
+    <!-- Sidebar -->
+    <div class="d-flex">
+        <nav id="sidebar" class="bg-dark text-white p-3 position-fixed" style="min-width: 250px; height: 100vh;">
+            <h2 class="text-center mb-4">Eventia</h2>
+            <ul class="nav flex-column">
+                <li class="nav-item mb-3">
+                    <button class="btn btn-primary w-100 text-start" data-bs-toggle="modal"
+                        data-bs-target="#createEventModal">+ Crear Evento</button>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="/dashboard">📋 Tus Eventos</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white" href="/statistics">📊 Estadísticas</a>
+                </li>
+                <li class="nav-item mb-4">
+                    <a class="nav-link text-white" href="/settings">⚙️ Configuración</a>
+                </li>
+            </ul>
+            <div class="logout-section mt-auto">
+                <button class="btn btn-outline-light w-100" onclick="logout()">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="p-4 w-100" style="margin-left: 250px;">
+            <h2 class="text-primary mb-4">Tus Eventos</h2>
+
+            <!-- Eventos en tarjetas -->
+            <div class="row mb-4">
+                <% if (events.length > 0) { %>
+                    <% events.forEach(event => { %>
+                        <div class="col-md-4">
+                            <div class="card shadow-sm mb-4" style="border-radius: 15px; overflow: hidden;">
+                                <div class="card-header text-white" style="background-color: #576EF2;">
+                                    <h5 class="card-title mb-0">
+                                        <%= event.title %>
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text text-muted">
+                                        <%= event.description %>
+                                    </p>
+                                    <p class="card-text">
+                                        <strong>Fecha:</strong> <%= new Date(event.date).toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' }) %><br>
+                                        <strong>Ubicación:</strong> <%= event.location %><br>
+                                        <strong>Asistentes Estimados:</strong> <%= event.attendees %>
+                                    </p>                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="/events/<%= event.id %>/qr" class="btn btn-outline-primary btn-sm">Ver QR</a>
+                                        <small class="text-muted">ID: <%= event.id %></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="text-muted">Aún no has creado ningún evento.</p>
+                <% } %>
+            </div>
+
+            <!-- Tabla de eventos -->
+            <h3 class="text-primary mb-4">Tabla de Eventos</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Descripción</th>
+                        <th>Fecha</th>
+                        <th>Ubicación</th>
+                        <th>Asistentes</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (events.length > 0) { %>
+                        <% events.forEach(event => { %>
+                            <tr>
+                                <td><%= event.id %></td>
+                                <td><%= event.title %></td>
+                                <td><%= event.description %></td>
+                                <td><%= new Date(event.date).toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' }) %></td>
+                                <td><%= event.location %></td>
+                                <td><%= event.attendees %></td>
+                                <td>
+                                    <!-- Botón de Editar -->
+<!-- Botón de Editar -->
+<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editEventModal"
+        data-id="<%= event.id %>" 
+        data-title="<%= event.title %>" 
+        data-description="<%= event.description %>" 
+        data-date="<%= event.date %>" 
+        data-location="<%= event.location %>" 
+        data-attendees="<%= event.attendees %>">
+    Editar
+</button>
+
+
+                                    <!-- Borrar botón -->
+                                    <form action="/events/<%= event.id %>/delete" method="POST" class="d-inline-block">
+                                        <button type="submit" class="btn btn-danger btn-sm">Borrar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" class="text-center">No hay eventos disponibles.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </main>
+
+    </div>
+
+    <!-- Modal para Crear Evento -->
+    <div class="modal fade" id="createEventModal" tabindex="-1" aria-labelledby="createEventModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createEventModalLabel">Crear Evento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createEventForm" action="/events/create" method="POST">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Título del Evento</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Título del Evento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="description" name="description" placeholder="Descripción" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="attendees" class="form-label">Número Estimado de Asistentes</label>
+                            <input type="number" class="form-control" id="attendees" name="attendees" placeholder="Ej: 100" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Lugar</label>
+                            <input type="text" class="form-control" id="location" name="location" placeholder="Ubicación del Evento" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Crear Evento</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Modal para Editar Evento -->
+<div class="modal fade" id="editEventModal" tabindex="-1" aria-labelledby="editEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editEventModalLabel">Editar Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editEventForm">
+                    <!-- Campo oculto para el ID del evento -->
+                    <input type="hidden" id="edit-event-id" name="id">
+
+                    <div class="mb-3">
+                        <label for="edit-title" class="form-label">Título del Evento</label>
+                        <input type="text" class="form-control" id="edit-title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="edit-description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-date" class="form-label">Fecha</label>
+                        <input type="date" class="form-control" id="edit-date" name="date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-attendees" class="form-label">Número Estimado de Asistentes</label>
+                        <input type="number" class="form-control" id="edit-attendees" name="attendees" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-location" class="form-label">Lugar</label>
+                        <input type="text" class="form-control" id="edit-location" name="location" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+
+</html>

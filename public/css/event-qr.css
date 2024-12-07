@@ -1,0 +1,136 @@
+/* Resetting default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    position: relative; /* Necesario para el pseudo-elemento */
+}
+
+/* Aplicar la imagen de fondo con desenfoque */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&q=80');
+    background-size: cover;
+    background-position: center center;
+    filter: blur(8px); /* Aplica el desenfoque a la imagen de fondo */
+    z-index: -1; /* Coloca la imagen detrás del contenido */
+}
+
+header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1rem;
+    background-color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+nav a {
+    color: #1e2a38;
+    margin: 0 15px;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+nav a:hover {
+    background-color: #f0f0f0;
+    color: #576ef2;
+}
+
+.container {
+    background-color: white;
+    padding: 30px;
+    text-align: center;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    z-index: 1; /* Asegura que el contenido esté encima de la imagen */
+}
+
+.qr-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.qr-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.qr-image {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.event-info {
+    flex: 1;
+    text-align: left;
+    padding-left: 30px;
+}
+
+.event-info h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.event-info p {
+    font-size: 1rem;
+    color: #777;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .qr-info {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .event-info {
+        padding-left: 0;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .qr-image {
+        width: 250px;
+        height: 250px;
+    }
+
+    .event-info h2 {
+        font-size: 1.5rem;
+    }
+}

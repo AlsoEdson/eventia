@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Evento</title>
+    <link rel="stylesheet" href="/css/create-event.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+    <!-- Modal -->
+    <div class="modal" id="createEventModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Crear Evento</h5>
+                    <button type="button" class="btn-close" id="closeModal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/events/create" method="POST" id="eventForm">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Título del Evento</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Título del Evento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Descripción" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="attendees" class="form-label">Número de Asistentes Estimados</label>
+                            <input type="number" class="form-control" id="attendees" name="attendees" placeholder="Número de asistentes" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Lugar</label>
+                            <input type="text" class="form-control" id="location" name="location" placeholder="Ubicación del Evento" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Crear</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/modal.js"></script>
+</body>
+</html>
