@@ -7,12 +7,12 @@ const loadEvent = async (req, res, next) => {
     try {
         const { eventId } = req.params;
         const event = await eventRepository.findEventById(eventId);
-        if (!event) return res.status(404).send('Evento no encontrado');
+        if (!event) return res.status(404).json({ success: false, message: 'Evento no encontrado' });
         req.event = event; // Asigna el evento al objeto req para usarlo en los controladores
         next();
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Error al cargar el evento');
+        console.error('Error al cargar el evento:', err.message);
+        res.status(500).json({ success: false, message: 'Error al cargar el evento' });
     }
 };
 
@@ -25,11 +25,12 @@ const renderCreateEventPage = (req, res) => {
 const createEvent = async (req, res) => {
     const { title, description, date, attendees, location } = req.body;
 
-    try {
-        if (!title || title.trim() === '') {
-            return res.status(400).json({ success: false, message: 'El título del evento es obligatorio' });
-        }
+    // Validación básica de entrada
+    if (!title || !description || !date || !location) {
+        return res.status(400).json({ success: false, message: 'Todos los campos obligatorios deben ser completados' });
+    }
 
+    try {
         const qrCode = await generateQRCode(title);
 
         const newEvent = await eventRepository.createEvent(
@@ -39,12 +40,13 @@ const createEvent = async (req, res) => {
             attendees,
             location,
             qrCode,
-            req.session.userId
+            req.session?.userId // Validar sesión antes de este punto es ideal
         );
 
-        res.json({ success: true, event: newEvent });
+        console.log({ success: true, event: newEvent });
+        res.redirect('/dashboard');
     } catch (err) {
-        console.error(err);
+        console.error('Error al crear el evento:', err.message);
         res.status(500).json({ success: false, message: 'Error al crear el evento' });
     }
 };
@@ -57,27 +59,35 @@ const renderEventQRPage = async (req, res) => {
         const qrCodeData = await QRCode.toDataURL(`http://localhost:3000/events/${event.id}`);
         res.render('event-qr', { event, qrCodeData });
     } catch (err) {
-        console.error(err);
+        console.error('Error al generar el código QR:', err.message);
         res.status(500).send('Error al generar el código QR');
     }
 };
 
 // Renderiza la página para editar un evento
-const renderEditEventPage = async (req, res) => {
+const renderEditEventPage = (req, res) => {
     const { event } = req; // El evento cargado por el middleware `loadEvent`
     res.render('edit-event', { event });
 };
 
 // Actualiza un evento existente
 const updateEvent = async (req, res) => {
-    const { id, title, description, date, attendees, location } = req.body;
+    const { title, description, date, attendees, location } = req.body;
+    const { eventId } = req.params;
+
+    // Validación básica
+    if (!title || !description || !date || !location) {
+        return res.status(400).json({ success: false, message: 'Todos los campos obligatorios deben ser completados' });
+    }
 
     try {
-        const updatedEvent = await eventRepository.updateEvent(id, title, description, date, attendees, location);
+        const updatedEvent = await eventRepository.updateEvent(eventId, title, description, date, attendees, location);
         if (!updatedEvent) return res.status(404).json({ success: false, message: 'Evento no encontrado' });
-        res.json({ success: true, event: updatedEvent });
+
+        // Responder con un código 200 OK en lugar de redirigir
+        res.status(200).json({ success: true, message: 'Evento actualizado correctamente' });
     } catch (err) {
-        console.error(err);
+        console.error('Error al actualizar el evento:', err.message);
         res.status(500).json({ success: false, message: 'Error al actualizar el evento' });
     }
 };
@@ -88,9 +98,10 @@ const deleteEvent = async (req, res) => {
 
     try {
         await eventRepository.deleteEvent(eventId);
-        res.json({ success: true, message: 'Evento eliminado correctamente' });
+        console.log({ success: true, message: 'Evento eliminado correctamente' });
+        res.redirect('/dashboard');
     } catch (err) {
-        console.error(err);
+        console.error('Error al eliminar el evento:', err.message);
         res.status(500).json({ success: false, message: 'Error al eliminar el evento' });
     }
 };

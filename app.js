@@ -2,6 +2,8 @@ const express = require('express');
 const session = require('express-session');
 const morgan = require('morgan');
 const path = require('path');
+const methodOverride = require('method-override');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 
 // Configuración de sesiones
 app.use(session({
