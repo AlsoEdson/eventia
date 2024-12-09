@@ -8,7 +8,7 @@ const { loadEvent } = eventController;
 // Ruta para renderizar la página de creación de eventos
 router.get('/create', eventController.renderCreateEventPage);
 // Ruta para crear un nuevo evento
-router.post('/c', eventController.createEvent);
+router.post('/c', eventController.createEventProcedure);
 // Ruta para renderizar el QR del evento
 router.get('/:eventId/qr', loadEvent, eventController.renderEventQRPage);
 // Ruta para renderizar la página de edición de un evento

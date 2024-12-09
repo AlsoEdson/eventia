@@ -1,11 +1,12 @@
 const pool = require('../../config/database.config.js');
 const eventModel = require('../models/event.model');
 
-const createEvent = async (title, description, date, attendees, location, qrCode, userId) => {
+const createEvent = async (title, description, price, date, attendees, location, qrCode, userId) => {
     try {
         const { rows } = await pool.query(eventModel.createEvent, [
             title, 
-            description, 
+            description,
+            price, 
             date, 
             attendees, 
             location,
@@ -19,17 +20,19 @@ const createEvent = async (title, description, date, attendees, location, qrCode
     }
 };
 
-const createEventProcedure = async (title, description, date, attendees, location, qrCode, userId) => {
+const createEventProcedure = async (title, description, price, date, attendees, location, qrCode, userId) => {
     try {
-        await pool.query(eventModel.createEventProcedure, [
+        const { rows } = await pool.query(eventModel.createEventProcedure, [
             title, 
-            description, 
+            description,
+            price,
             date, 
             attendees, 
             location,
             qrCode, 
             userId
         ]);
+        return rows[0];
     } catch (error) {
         console.error('[EventRepository] Error executing procedure:', error.message);
         throw new Error('Failed to create event via procedure');
@@ -57,12 +60,13 @@ const findEventById = async (eventId) => {
     }
 };
 
-const updateEvent = async (id, title, description, date, attendees, location) => {
+const updateEvent = async (id, title, description, price, date, attendees, location) => {
     try {
         const { rows } = await pool.query(eventModel.updateEvent, [
             id, 
             title, 
-            description, 
+            description,
+            price,
             date, 
             attendees, 
             location
@@ -88,16 +92,6 @@ const deleteEvent = async (eventId) => {
     }
 };
 
-const calculateTotalPrice = async (eventId) => {
-    try {
-        const { rows } = await pool.query(eventModel.calculateTotalPrice, [eventId]);
-        return rows[0].total_price;
-    } catch (error) {
-        console.error('[EventRepository] Error calculating total price:', error.message);
-        throw new Error('Failed to calculate total price');
-    }
-};
-
 module.exports = { 
     createEvent, 
     createEventProcedure, 
@@ -105,5 +99,4 @@ module.exports = {
     findEventById, 
     updateEvent, 
     deleteEvent, 
-    calculateTotalPrice 
 };

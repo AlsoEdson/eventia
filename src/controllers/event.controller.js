@@ -23,10 +23,10 @@ const renderCreateEventPage = (req, res) => {
 
 // Crea un nuevo evento
 const createEvent = async (req, res) => {
-    const { title, description, date, attendees, location } = req.body;
+    const { title, description, price, date, attendees, location } = req.body;
 
     // Validación básica de entrada
-    if (!title || !description || !date || !location) {
+    if (!title || !description || !price || !date || !location) {
         return res.status(400).json({ success: false, message: 'Todos los campos obligatorios deben ser completados' });
     }
 
@@ -36,6 +36,7 @@ const createEvent = async (req, res) => {
         const newEvent = await eventRepository.createEvent(
             title,
             description,
+            price,
             date,
             attendees,
             location,
@@ -44,6 +45,37 @@ const createEvent = async (req, res) => {
         );
 
         console.log({ success: true, event: newEvent });
+        res.redirect('/dashboard');
+    } catch (err) {
+        console.error('Error al crear el evento:', err.message);
+        res.status(500).json({ success: false, message: 'Error al crear el evento' });
+    }
+};
+
+// Crea un nuevo evento
+const createEventProcedure = async (req, res) => {
+    const { title, description, price, date, attendees, location } = req.body;
+
+    // Validación básica de entrada
+    if (!title || !description || !price || !date || !attendees || !location) {
+        return res.status(400).json({ success: false, message: 'Todos los campos obligatorios deben ser completados' });
+    }
+
+    try {
+        const qrCode = await generateQRCode(title);
+
+        const createdEvent = await eventRepository.createEventProcedure(
+            title,
+            description,
+            price,
+            date,
+            attendees,
+            location,
+            qrCode,
+            req.session?.userId // Validar sesión antes de este punto es ideal
+        );
+
+        console.log({ success: true, event: createdEvent });
         res.redirect('/dashboard');
     } catch (err) {
         console.error('Error al crear el evento:', err.message);
@@ -72,16 +104,16 @@ const renderEditEventPage = (req, res) => {
 
 // Actualiza un evento existente
 const updateEvent = async (req, res) => {
-    const { title, description, date, attendees, location } = req.body;
+    const { title, description, price, date, attendees, location } = req.body;
     const { eventId } = req.params;
 
     // Validación básica
-    if (!title || !description || !date || !location) {
+    if (!title || !description || !price || !date || !attendees || !location) {
         return res.status(400).json({ success: false, message: 'Todos los campos obligatorios deben ser completados' });
     }
 
     try {
-        const updatedEvent = await eventRepository.updateEvent(eventId, title, description, date, attendees, location);
+        const updatedEvent = await eventRepository.updateEvent(eventId, title, description, price, date, attendees, location);
         if (!updatedEvent) return res.status(404).json({ success: false, message: 'Evento no encontrado' });
 
         // Responder con un código 200 OK en lugar de redirigir
@@ -109,6 +141,7 @@ const deleteEvent = async (req, res) => {
 module.exports = {
     renderCreateEventPage,
     createEvent,
+    createEventProcedure,
     renderEventQRPage,
     renderEditEventPage,
     updateEvent,

@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const eventId = button.getAttribute('data-id');
         const title = button.getAttribute('data-title');
         const description = button.getAttribute('data-description');
+        const price = button.getAttribute('data-price');
         const date = button.getAttribute('data-date').slice(0, 10); // Formato YYYY-MM-DD
         const location = button.getAttribute('data-location');
         const attendees = button.getAttribute('data-attendees');
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         editEventForm.querySelector('#edit-event-id').value = eventId;
         editEventForm.querySelector('#edit-title').value = title;
         editEventForm.querySelector('#edit-description').value = description;
+        editEventForm.querySelector('#edit-price').value = price;
         editEventForm.querySelector('#edit-date').value = date;
         editEventForm.querySelector('#edit-location').value = location;
         editEventForm.querySelector('#edit-attendees').value = attendees;
@@ -32,10 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = {
             title: editEventForm.querySelector('#edit-title').value,
             description: editEventForm.querySelector('#edit-description').value,
+            price: parseInt(editEventForm.querySelector('#edit-price').value, 10),
             date: editEventForm.querySelector('#edit-date').value,
             location: editEventForm.querySelector('#edit-location').value,
-            attendees: editEventForm.querySelector('#edit-attendees').value,
-        };
+            attendees: parseInt(editEventForm.querySelector('#edit-attendees').value, 10),
+        };        
 
         try {
             // Enviar solicitud PUT para actualizar el evento

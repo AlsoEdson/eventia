@@ -11,4 +11,13 @@ const findUserByEmail = async (email) => {
     return rows[0];
 };
 
-module.exports = { createUser, findUserByEmail };
+const calculateTotalPrice = async (userId) => {
+    try {
+        const { rows } = await pool.query(userModel.calculateTotalPrice, [userId]);
+        return rows[0].total_price;
+    } catch (error) {
+        throw new Error('Error al calcular el precio total: ' + error.message);
+    }
+};
+
+module.exports = { createUser, findUserByEmail, calculateTotalPrice };

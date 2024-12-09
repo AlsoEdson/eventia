@@ -63,6 +63,10 @@
                                                 <strong>Asistentes Estimados:</strong>
                                                 <%= event.attendees %>
                                     </p>
+                                    <p class="card-text">
+                                        <strong>Precio: $</strong>
+                                        <%= event.price %>
+                                    </p>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <a href="/events/<%= event.id %>/qr" class="btn btn-outline-primary btn-sm">Ver
                                             QR</a>
@@ -77,6 +81,40 @@
                                 <% } %>
             </div>
 
+            <!-- Estadísticas -->
+<div class="row mb-4">
+    <!-- Total de Eventos -->
+    <div class="col-md-4">
+        <div class="card shadow-sm" style="border-radius: 15px; overflow: hidden;">
+            <div class="card-body text-center">
+                <h5 class="card-title mb-3">Total de Eventos</h5>
+                <h2><%= events.length %></h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total de Asistentes Estimados -->
+    <div class="col-md-4">
+        <div class="card shadow-sm" style="border-radius: 15px; overflow: hidden;">
+            <div class="card-body text-center">
+                <h5 class="card-title mb-3">Total de Asistentes Estimados</h5>
+                <h2><%= events.reduce((total, event) => total + event.attendees, 0) %></h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Precio Total de los Eventos -->
+    <div class="col-md-4">
+        <div class="card shadow-sm" style="border-radius: 15px; overflow: hidden;">
+            <div class="card-body text-center">
+                <h5 class="card-title mb-3">Recaudación Estimada</h5>
+                <h2>$ <%= totalPrice %></h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+
             <!-- Tabla de eventos -->
             <h3 class="text-primary mb-4">Tabla de Eventos</h3>
             <table class="table table-striped">
@@ -85,6 +123,7 @@
                         <th>ID</th>
                         <th>Título</th>
                         <th>Descripción</th>
+                        <th>Precio</th>
                         <th>Fecha</th>
                         <th>Ubicación</th>
                         <th>Asistentes</th>
@@ -105,6 +144,9 @@
                                     <%= event.description %>
                                 </td>
                                 <td>
+                                    <%= event.price %>
+                                </td>
+                                <td>
                                     <%= new Date(event.date).toLocaleDateString('es-PE', { year: 'numeric' ,
                                         month: 'long' , day: 'numeric' }) %>
                                 </td>
@@ -119,12 +161,13 @@
                                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#editEventModal" data-id="<%= event.id %>"
                                         data-title="<%= event.title %>" data-description="<%= event.description %>"
-                                        data-date="<%= event.date %>" data-location="<%= event.location %>"
-                                        data-attendees="<%= event.attendees %>">
+                                        data-price="<%= event.price %>" data-date="<%= event.date %>"
+                                        data-location="<%= event.location %>" data-attendees="<%= event.attendees %>">
                                         Editar
                                     </button>
                                     <!-- Borrar botón -->
-                                    <form action="/events/<%= event.id %>?_method=DELETE" method="POST" class="d-inline-block">
+                                    <form action="/events/<%= event.id %>?_method=DELETE" method="POST"
+                                        class="d-inline-block">
                                         <button type="submit" class="btn btn-danger btn-sm">Borrar</button>
                                     </form>
                                 </td>
@@ -161,6 +204,11 @@
                             <label for="description" class="form-label">Descripción</label>
                             <textarea class="form-control" id="description" name="description" placeholder="Descripción"
                                 rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Precio</label>
+                            <input type="number" class="form-control" id="price" name="price" placeholder="Ej: 10"
+                                required>
                         </div>
                         <div class="mb-3">
                             <label for="date" class="form-label">Fecha</label>
@@ -204,6 +252,10 @@
                             <label for="edit-description" class="form-label">Descripción</label>
                             <textarea class="form-control" id="edit-description" name="description" rows="3"
                                 required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-price" class="form-label">Precio</label>
+                            <input type="number" class="form-control" id="edit-price" name="price" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit-date" class="form-label">Fecha</label>
