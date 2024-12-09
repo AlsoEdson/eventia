@@ -1,15 +1,23 @@
 module.exports = {
     createEvent: `
-        INSERT INTO events (title, description, price, date, attendees, location, qr_code, user_id) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
-        RETURNING *
-    `,
-    createEventProcedure: `CALL create_event($1, $2, $3, $4, $5, $6, $7, $8)`,
-    findEventsByUser: 'SELECT * FROM events WHERE user_id = $1',
-    findEventById: 'SELECT * FROM events WHERE id = $1',
-    updateEvent: `UPDATE events
-                    SET title = $2, description = $3, price = $4, date = $5, attendees = $6, location = $7
-                    WHERE id = $1
-                    RETURNING *`,
-    delete: 'DELETE FROM events WHERE id = $1',
+        INSERT INTO events (title, description, price, fecha, attendees, location, qr_code, user_id) 
+        VALUES (:title, :description, :price, :fecha, :attendees, :location, :qr_code, :user_id)
+        RETURNING *`,
+
+    createEventProcedure: `
+        BEGIN
+            create_event(:title, :description, :price, :fecha, :attendees, :location, :qr_code, :user_id);
+        END;`,
+
+    findEventsByUser: 'SELECT * FROM events WHERE user_id = :user_id',
+
+    findEventById: 'SELECT * FROM events WHERE id = :id',
+
+    updateEvent: `
+        UPDATE events
+        SET title = :title, description = :description, price = :price, fecha = :fecha, attendees = :attendees, location = :location
+        WHERE id = :id
+        RETURNING *`,
+
+    delete: 'DELETE FROM events WHERE id = :id',
 };

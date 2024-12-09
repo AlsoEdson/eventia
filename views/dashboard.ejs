@@ -82,37 +82,42 @@
             </div>
 
             <!-- Estadísticas -->
-<div class="row mb-4">
-    <!-- Total de Eventos -->
-    <div class="col-md-4">
-        <div class="card shadow-sm" style="border-radius: 15px; overflow: hidden;">
-            <div class="card-body text-center">
-                <h5 class="card-title mb-3">Total de Eventos</h5>
-                <h2><%= events.length %></h2>
-            </div>
-        </div>
-    </div>
+            <div class="row mb-4">
+                <!-- Total de Eventos -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm" style="border-radius: 15px; overflow: hidden;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title mb-3">Total de Eventos</h5>
+                            <h2>
+                                <%= events.length %>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Total de Asistentes Estimados -->
-    <div class="col-md-4">
-        <div class="card shadow-sm" style="border-radius: 15px; overflow: hidden;">
-            <div class="card-body text-center">
-                <h5 class="card-title mb-3">Total de Asistentes Estimados</h5>
-                <h2><%= events.reduce((total, event) => total + event.attendees, 0) %></h2>
-            </div>
-        </div>
-    </div>
+                <!-- Total de Asistentes Estimados -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm" style="border-radius: 15px; overflow: hidden;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title mb-3">Total de Asistentes Estimados</h5>
+                            <h2>
+                                <%= events.reduce((total, event)=> total + event.attendees, 0) %>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Precio Total de los Eventos -->
-    <div class="col-md-4">
-        <div class="card shadow-sm" style="border-radius: 15px; overflow: hidden;">
-            <div class="card-body text-center">
-                <h5 class="card-title mb-3">Recaudación Estimada</h5>
-                <h2>$ <%= totalPrice %></h2>
+                <!-- Precio Total de los Eventos -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm" style="border-radius: 15px; overflow: hidden;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title mb-3">Recaudación Estimada</h5>
+                            <h2>$ <%= totalPrice %>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
 
             <!-- Tabla de eventos -->
